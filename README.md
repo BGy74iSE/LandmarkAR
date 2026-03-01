@@ -2,6 +2,11 @@
 
 An augmented reality iOS app that shows floating labels for nearby natural and historic landmarks using your iPhone's camera, GPS, and compass — powered by Wikipedia.
 
+All of this was produced from the following prompt:
+
+> I would like to develop an augmented reality app for my iphone that will, given my gps location and the location of natural and historic landmarks, show me information about the things in the field of view.
+
+
 ---
 
 ## What It Does
