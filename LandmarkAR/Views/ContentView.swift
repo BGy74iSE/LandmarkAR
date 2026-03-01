@@ -1,0 +1,206 @@
+import SwiftUI
+import CoreLocation
+
+// MARK: - ContentView
+// The root view of the app. Manages all state and orchestrates:
+// - Location permissions
+// - Fetching landmarks from Wikipedia
+// - Passing data to the AR view
+// - Showing the detail sheet when a label is tapped
+
+struct ContentView: View {
+
+    // These objects live for the lifetime of the app
+    @StateObject private var locationManager = LocationManager()
+
+    // App state
+    @State private var landmarks: [Landmark] = []
+    @State private var selectedLandmark: Landmark?
+    @State private var isLoading = false
+    @State private var errorMessage: String?
+    @State private var lastFetchLocation: CLLocation?  // avoid re-fetching if user hasn't moved
+
+    private let wikipediaService = WikipediaService()
+    private let refetchDistanceThreshold: CLLocationDistance = 200  // re-fetch after moving 200m
+
+    var body: some View {
+        ZStack {
+            // MARK: Permission Not Granted
+            if locationManager.authorizationStatus == .denied ||
+               locationManager.authorizationStatus == .restricted {
+                PermissionDeniedView()
+
+            // MARK: Waiting for first location fix
+            } else if locationManager.userLocation == nil {
+                WaitingForLocationView()
+
+            // MARK: AR is ready — show the camera + labels
+            } else {
+                ARLandmarkView(
+                    landmarks: landmarks,
+                    userLocation: locationManager.userLocation,
+                    heading: locationManager.heading,
+                    selectedLandmark: $selectedLandmark
+                )
+                .ignoresSafeArea()
+
+                // Overlay: loading spinner + landmark count
+                overlayUI
+            }
+        }
+        // Request location permission when app first opens
+        .onAppear {
+            locationManager.start()
+        }
+        // Fetch landmarks whenever user location updates significantly
+        .onChange(of: locationManager.userLocation) { _, newLocation in
+            guard let newLocation = newLocation else { return }
+            fetchLandmarksIfNeeded(at: newLocation)
+        }
+        // Show detail sheet when user taps an AR label
+        .sheet(item: $selectedLandmark) { landmark in
+            LandmarkDetailSheet(landmark: landmark)
+        }
+    }
+
+    // MARK: - Overlay UI (on top of AR camera)
+
+    private var overlayUI: some View {
+        VStack {
+            // Top bar
+            HStack {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("LandmarkAR")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                    if !landmarks.isEmpty {
+                        Text("\(landmarks.count) landmarks nearby")
+                            .font(.caption)
+                            .foregroundColor(.white.opacity(0.8))
+                    }
+                }
+                Spacer()
+
+                // Refresh button — re-fetch landmarks manually
+                Button {
+                    if let location = locationManager.userLocation {
+                        Task { await fetchLandmarks(at: location) }
+                    }
+                } label: {
+                    Image(systemName: "arrow.clockwise")
+                        .foregroundColor(.white)
+                        .padding(8)
+                        .background(.ultraThinMaterial)
+                        .clipShape(Circle())
+                }
+            }
+            .padding()
+            .background(
+                LinearGradient(
+                    colors: [Color.black.opacity(0.5), Color.clear],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            )
+
+            Spacer()
+
+            // Loading indicator
+            if isLoading {
+                HStack(spacing: 8) {
+                    ProgressView()
+                        .tint(.white)
+                    Text("Finding landmarks…")
+                        .font(.caption)
+                        .foregroundColor(.white)
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
+                .background(.ultraThinMaterial)
+                .cornerRadius(20)
+                .padding(.bottom, 20)
+            }
+
+            // Error message
+            if let error = errorMessage {
+                Text(error)
+                    .font(.caption)
+                    .foregroundColor(.white)
+                    .padding()
+                    .background(Color.red.opacity(0.7))
+                    .cornerRadius(8)
+                    .padding(.bottom, 20)
+            }
+        }
+    }
+
+    // MARK: - Landmark Fetching
+
+    /// Only re-fetch if we've moved more than `refetchDistanceThreshold` meters
+    private func fetchLandmarksIfNeeded(at location: CLLocation) {
+        if let last = lastFetchLocation,
+           location.distance(from: last) < refetchDistanceThreshold {
+            return  // haven't moved enough — skip
+        }
+        Task { await fetchLandmarks(at: location) }
+    }
+
+    @MainActor
+    private func fetchLandmarks(at location: CLLocation) async {
+        isLoading = true
+        errorMessage = nil
+        lastFetchLocation = location
+
+        do {
+            let fetched = try await wikipediaService.fetchNearbyLandmarks(near: location)
+            landmarks = fetched
+        } catch {
+            errorMessage = "Couldn't load landmarks: \(error.localizedDescription)"
+        }
+
+        isLoading = false
+    }
+}
+
+// MARK: - Permission Denied View
+
+struct PermissionDeniedView: View {
+    var body: some View {
+        VStack(spacing: 20) {
+            Image(systemName: "location.slash.fill")
+                .font(.system(size: 60))
+                .foregroundColor(.orange)
+            Text("Location Access Required")
+                .font(.title2).bold()
+            Text("LandmarkAR needs your location to find nearby landmarks and show them in augmented reality.")
+                .multilineTextAlignment(.center)
+                .foregroundColor(.secondary)
+                .padding(.horizontal)
+            Button("Open Settings") {
+                if let url = URL(string: UIApplication.openSettingsURLString) {
+                    UIApplication.shared.open(url)
+                }
+            }
+            .buttonStyle(.borderedProminent)
+        }
+        .padding()
+    }
+}
+
+// MARK: - Waiting for Location View
+
+struct WaitingForLocationView: View {
+    var body: some View {
+        VStack(spacing: 20) {
+            ProgressView()
+                .scaleEffect(1.5)
+            Text("Acquiring GPS signal…")
+                .font(.headline)
+            Text("Please stand outside with a clear view of the sky for best results.")
+                .multilineTextAlignment(.center)
+                .foregroundColor(.secondary)
+                .padding(.horizontal)
+        }
+        .padding()
+    }
+}

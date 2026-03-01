@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- Required bundle identification keys -->
+    <key>CFBundleName</key>
+    <string>LandmarkAR</string>
+    <key>CFBundleDisplayName</key>
+    <string>LandmarkAR</string>
+    <key>CFBundleIdentifier</key>
+    <string>com.edwardaspendesigns.LandmarkAR</string>
+    <key>CFBundleVersion</key>
+    <string>1</string>
+    <key>CFBundleShortVersionString</key>
+    <string>1.0</string>
+    <key>CFBundleExecutable</key>
+    <string>$(EXECUTABLE_NAME)</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>LSRequiresIPhoneOS</key>
+    <true/>
+
+    <!-- Location permission — shown to user when app first requests location -->
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>LandmarkAR uses your location to find nearby natural and historic landmarks and display them in augmented reality.</string>
+
+    <!-- Camera permission — required for ARKit -->
+    <key>NSCameraUsageDescription</key>
+    <string>LandmarkAR needs camera access to display augmented reality overlays on your surroundings.</string>
+
+    <!-- ARKit requirement declaration — App Store requires this -->
+    <key>UIRequiredDeviceCapabilities</key>
+    <array>
+        <string>arkit</string>
+    </array>
+
+    <!-- Supported orientations -->
+    <key>UISupportedInterfaceOrientations</key>
+    <array>
+        <string>UIInterfaceOrientationPortrait</string>
+        <string>UIInterfaceOrientationLandscapeLeft</string>
+        <string>UIInterfaceOrientationLandscapeRight</string>
+    </array>
+</dict>
+</plist>
