@@ -22,6 +22,7 @@ struct ContentView: View {
 
     private let wikipediaService = WikipediaService()
     private let osmService = OpenStreetMapService()
+    private let npsService = NPSService()
     private let refetchDistanceThreshold: CLLocationDistance = 200
 
     // Landmarks filtered by the user's category settings (LAR-5)
@@ -67,12 +68,20 @@ struct ContentView: View {
             guard let newLocation = newLocation else { return }
             fetchLandmarksIfNeeded(at: newLocation)
         }
-        // Re-fetch when key settings change (LAR-3, LAR-4, LAR-11)
+        // Re-fetch when key settings change (LAR-3, LAR-4, LAR-11, LAR-12)
         .onChange(of: settings.isWikipediaEnabled) { _, _ in
             guard let location = locationManager.userLocation else { return }
             Task { await fetchLandmarks(at: location) }
         }
         .onChange(of: settings.isOpenStreetMapEnabled) { _, _ in
+            guard let location = locationManager.userLocation else { return }
+            Task { await fetchLandmarks(at: location) }
+        }
+        .onChange(of: settings.isNPSEnabled) { _, _ in
+            guard let location = locationManager.userLocation else { return }
+            Task { await fetchLandmarks(at: location) }
+        }
+        .onChange(of: settings.npsApiKey) { _, _ in
             guard let location = locationManager.userLocation else { return }
             Task { await fetchLandmarks(at: location) }
         }
@@ -186,16 +195,17 @@ struct ContentView: View {
         lastFetchLocation = location
 
         do {
-            // Fetch from all enabled data sources in parallel (LAR-11)
+            // Fetch from all enabled data sources in parallel (LAR-11, LAR-12)
             async let wikipediaResults = wikipediaService.fetchNearbyLandmarks(near: location, settings: settings)
             async let osmResults = osmService.fetchNearbyLandmarks(near: location, settings: settings)
+            async let npsResults = npsService.fetchNearbyLandmarks(near: location, settings: settings)
 
-            let (fromWikipedia, fromOSM) = try await (wikipediaResults, osmResults)
+            let (fromWikipedia, fromOSM, fromNPS) = try await (wikipediaResults, osmResults, npsResults)
 
             // Merge and deduplicate by title (case-insensitive), preferring Wikipedia entries
             var seen = Set<String>()
             var merged: [Landmark] = []
-            for landmark in (fromWikipedia + fromOSM) {
+            for landmark in (fromWikipedia + fromOSM + fromNPS) {
                 let key = landmark.title.lowercased()
                 if seen.insert(key).inserted {
                     merged.append(landmark)
