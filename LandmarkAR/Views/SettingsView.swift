@@ -12,7 +12,7 @@ struct SettingsView: View {
         NavigationStack {
             Form {
 
-                // MARK: Data Sources (LAR-3, LAR-11)
+                // MARK: Data Sources (LAR-3, LAR-11, LAR-12)
                 Section {
                     Toggle(isOn: $settings.isWikipediaEnabled) {
                         Label("Wikipedia", systemImage: "globe")
@@ -20,10 +20,27 @@ struct SettingsView: View {
                     Toggle(isOn: $settings.isOpenStreetMapEnabled) {
                         Label("OpenStreetMap", systemImage: "map")
                     }
+                    Toggle(isOn: $settings.isNPSEnabled) {
+                        Label("National Park Service", systemImage: "tree.fill")
+                    }
+                    if settings.isNPSEnabled {
+                        HStack {
+                            Text("API Key")
+                            Spacer()
+                            SecureField("Required", text: $settings.npsApiKey)
+                                .multilineTextAlignment(.trailing)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
                 } header: {
                     Text("Data Sources")
                 } footer: {
-                    Text("Enable or disable location data from each source.")
+                    if settings.isNPSEnabled && settings.npsApiKey.isEmpty {
+                        Text("A free NPS API key is required. Get one at nps.gov/subjects/developer.")
+                            .foregroundStyle(.orange)
+                    } else {
+                        Text("Enable or disable location data from each source.")
+                    }
                 }
 
                 // MARK: Distance Filter (LAR-4)
