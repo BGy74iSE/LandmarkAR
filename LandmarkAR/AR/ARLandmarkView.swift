@@ -60,8 +60,26 @@ class ARLandmarkViewController: UIViewController, ARSessionDelegate {
 
         let config = ARWorldTrackingConfiguration()
         config.worldAlignment = .gravityAndHeading
+
+        // LAR-20: Pick the video format whose aspect ratio best matches the device screen,
+        // so the camera feed fills the display with minimal cropping or letterboxing.
+        if let format = Self.bestVideoFormat() {
+            config.videoFormat = format
+        }
+
         arView.session.run(config)
         arView.session.delegate = self
+    }
+
+    // LAR-20: Returns the supported video format whose aspect ratio is closest to the screen's.
+    private static func bestVideoFormat() -> ARConfiguration.VideoFormat? {
+        let screen = UIScreen.main.bounds.size
+        let screenAspect = max(screen.width, screen.height) / min(screen.width, screen.height)
+        return ARWorldTrackingConfiguration.supportedVideoFormats.min { a, b in
+            let aAspect = a.imageResolution.width / a.imageResolution.height
+            let bAspect = b.imageResolution.width / b.imageResolution.height
+            return abs(aAspect - screenAspect) < abs(bAspect - screenAspect)
+        }
     }
 
     // MARK: - Update from SwiftUI
@@ -100,8 +118,11 @@ class ARLandmarkViewController: UIViewController, ARSessionDelegate {
               let arFrame = arView.session.currentFrame else { return }
 
         let cameraTransform = arFrame.camera.transform
+        // LAR-20: Use the actual interface orientation so the projection matches
+        // the device's current display orientation rather than assuming landscape.
+        let orientation = view.window?.windowScene?.interfaceOrientation ?? .portrait
         let projectionMatrix = arFrame.camera.projectionMatrix(
-            for: .landscapeRight,
+            for: orientation,
             viewportSize: arView.bounds.size,
             zNear: 0.1,
             zFar: 1000
