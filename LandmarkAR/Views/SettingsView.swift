@@ -58,20 +58,26 @@ struct SettingsView: View {
                     Text("Maximum landmarks shown at once. The closest and farthest are always included.")
                 }
 
-                // MARK: Distance Filter (LAR-4, LAR-13)
+                // MARK: Category Filters + Distance (LAR-5, LAR-13, LAR-24)
+                // Toggle and distance slider are grouped per category.
+                // The slider is only shown when the category is enabled.
                 Section {
-                    CategoryDistanceRow(label: "Historical", systemImage: "building.columns.fill",
-                                        index: $settings.maxDistanceIndexHistorical)
-                    CategoryDistanceRow(label: "Natural", systemImage: "mountain.2.fill",
-                                        index: $settings.maxDistanceIndexNatural)
-                    CategoryDistanceRow(label: "Cultural", systemImage: "theatermasks.fill",
-                                        index: $settings.maxDistanceIndexCultural)
-                    CategoryDistanceRow(label: "Other", systemImage: "mappin.circle.fill",
-                                        index: $settings.maxDistanceIndexOther)
+                    CategoryRow(label: "Historical", systemImage: "building.columns.fill",
+                                isEnabled: $settings.showHistorical,
+                                distanceIndex: $settings.maxDistanceIndexHistorical)
+                    CategoryRow(label: "Natural", systemImage: "mountain.2.fill",
+                                isEnabled: $settings.showNatural,
+                                distanceIndex: $settings.maxDistanceIndexNatural)
+                    CategoryRow(label: "Cultural", systemImage: "theatermasks.fill",
+                                isEnabled: $settings.showCultural,
+                                distanceIndex: $settings.maxDistanceIndexCultural)
+                    CategoryRow(label: "Other", systemImage: "mappin.circle.fill",
+                                isEnabled: $settings.showOther,
+                                distanceIndex: $settings.maxDistanceIndexOther)
                 } header: {
-                    Text("Distance by Category")
+                    Text("Categories")
                 } footer: {
-                    Text("Set the maximum display distance per landmark category.")
+                    Text("Enable categories and set the maximum distance for each.")
                 }
 
                 // MARK: Error Log (LAR-16)
@@ -83,26 +89,6 @@ struct SettingsView: View {
                     }
                 } header: {
                     Text("Diagnostics")
-                }
-
-                // MARK: Category Filters (LAR-5)
-                Section {
-                    Toggle(isOn: $settings.showHistorical) {
-                        Label("Historical", systemImage: "building.columns.fill")
-                    }
-                    Toggle(isOn: $settings.showNatural) {
-                        Label("Natural", systemImage: "mountain.2.fill")
-                    }
-                    Toggle(isOn: $settings.showCultural) {
-                        Label("Cultural", systemImage: "theatermasks.fill")
-                    }
-                    Toggle(isOn: $settings.showOther) {
-                        Label("Other", systemImage: "mappin.circle.fill")
-                    }
-                } header: {
-                    Text("Categories")
-                } footer: {
-                    Text("Filter which types of landmarks appear in AR.")
                 }
             }
             .navigationTitle("Settings")
@@ -116,29 +102,36 @@ struct SettingsView: View {
     }
 }
 
-// MARK: - CategoryDistanceRow (LAR-13)
-// A form row with a labelled slider that snaps to discrete distance values.
+// MARK: - CategoryRow (LAR-13, LAR-24)
+// A form row combining a category toggle with a conditional distance slider.
+// The slider is hidden when the category is disabled, but its value is preserved.
 
-private struct CategoryDistanceRow: View {
+private struct CategoryRow: View {
     let label: String
     let systemImage: String
-    @Binding var index: Double
+    @Binding var isEnabled: Bool
+    @Binding var distanceIndex: Double
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            HStack {
+            Toggle(isOn: $isEnabled) {
                 Label(label, systemImage: systemImage)
-                Spacer()
-                Text(AppSettings.distanceLabel(forIndex: index))
-                    .foregroundStyle(.secondary)
-                    .monospacedDigit()
             }
-            Slider(value: $index, in: 0...6, step: 1) {
-                Text(label)
-            } minimumValueLabel: {
-                Text("0.1").font(.caption2)
-            } maximumValueLabel: {
-                Text("100").font(.caption2)
+            if isEnabled {
+                HStack {
+                    Spacer()
+                    Text(AppSettings.distanceLabel(forIndex: distanceIndex))
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .monospacedDigit()
+                }
+                Slider(value: $distanceIndex, in: 0...6, step: 1) {
+                    Text(label)
+                } minimumValueLabel: {
+                    Text("0.1").font(.caption2)
+                } maximumValueLabel: {
+                    Text("100").font(.caption2)
+                }
             }
         }
         .padding(.vertical, 2)
