@@ -213,11 +213,11 @@ class LandmarkLabelView: UIView {
         // LAR-7: No background or border — transparent view, text only
         backgroundColor = .clear
 
-        // LAR-14: Red pin icon above the landmark name
+        // LAR-14: Category icon above the landmark name, matching the icons in Settings
         let pinImageView = UIImageView()
         let pinConfig = UIImage.SymbolConfiguration(pointSize: 22, weight: .bold)
-        pinImageView.image = UIImage(systemName: "mappin.fill", withConfiguration: pinConfig)
-        pinImageView.tintColor = .systemRed
+        pinImageView.image = UIImage(systemName: landmark.category.systemImageName, withConfiguration: pinConfig)
+        pinImageView.tintColor = .white
         pinImageView.contentMode = .scaleAspectFit
 
         // Name label
