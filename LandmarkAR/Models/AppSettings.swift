@@ -57,9 +57,14 @@ class AppSettings: ObservableObject {
     var maxDistanceKmCultural:   Double { AppSettings.km(forIndex: maxDistanceIndexCultural) }
     var maxDistanceKmOther:      Double { AppSettings.km(forIndex: maxDistanceIndexOther) }
 
-    /// Overall fetch radius — the maximum of all category distances.
+    /// Overall fetch radius — the maximum distance among enabled categories only (LAR-24).
     var maxDistanceKm: Double {
-        max(maxDistanceKmHistorical, maxDistanceKmNatural, maxDistanceKmCultural, maxDistanceKmOther)
+        var distances: [Double] = []
+        if showHistorical { distances.append(maxDistanceKmHistorical) }
+        if showNatural    { distances.append(maxDistanceKmNatural) }
+        if showCultural   { distances.append(maxDistanceKmCultural) }
+        if showOther      { distances.append(maxDistanceKmOther) }
+        return distances.max() ?? 0
     }
 
     // MARK: - Display Limit (LAR-23)
