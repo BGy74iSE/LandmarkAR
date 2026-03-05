@@ -7,6 +7,16 @@ import Foundation
 enum LandmarkCategory: String {
     case historical, natural, cultural, other
 
+    // LAR-14: Icon matching the category toggles shown in Settings
+    var systemImageName: String {
+        switch self {
+        case .historical: return "building.columns.fill"
+        case .natural:    return "mountain.2.fill"
+        case .cultural:   return "theatermasks.fill"
+        case .other:      return "mappin.circle.fill"
+        }
+    }
+
     static func classify(title: String, summary: String) -> LandmarkCategory {
         let text = (title + " " + summary).lowercased()
 
