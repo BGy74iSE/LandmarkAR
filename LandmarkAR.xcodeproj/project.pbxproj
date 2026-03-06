@@ -24,6 +24,12 @@
 		A118 /* ElevationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A018 /* ElevationService.swift */; };
 		A119 /* DataSourceCircuitBreaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A019 /* DataSourceCircuitBreaker.swift */; };
 		A120 /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A020 /* NetworkMonitor.swift */; };
+		T101 /* LandmarkCategoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = T001 /* LandmarkCategoryTests.swift */; };
+		T102 /* AppSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = T002 /* AppSettingsTests.swift */; };
+		T103 /* DataSourceCircuitBreakerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = T003 /* DataSourceCircuitBreakerTests.swift */; };
+		T104 /* ErrorLoggerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = T004 /* ErrorLoggerTests.swift */; };
+		T105 /* BearingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = T005 /* BearingTests.swift */; };
+		T106 /* LandmarkModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = T006 /* LandmarkModelTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -46,6 +52,13 @@
 		A018 /* ElevationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElevationService.swift; sourceTree = "<group>"; };
 		A019 /* DataSourceCircuitBreaker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSourceCircuitBreaker.swift; sourceTree = "<group>"; };
 		A020 /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
+		T001 /* LandmarkCategoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LandmarkCategoryTests.swift; sourceTree = "<group>"; };
+		T002 /* AppSettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettingsTests.swift; sourceTree = "<group>"; };
+		T003 /* DataSourceCircuitBreakerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSourceCircuitBreakerTests.swift; sourceTree = "<group>"; };
+		T004 /* ErrorLoggerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorLoggerTests.swift; sourceTree = "<group>"; };
+		T005 /* BearingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BearingTests.swift; sourceTree = "<group>"; };
+		T006 /* LandmarkModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LandmarkModelTests.swift; sourceTree = "<group>"; };
+		TESTPROD /* LandmarkARTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LandmarkARTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,6 +70,16 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXContainerItemProxy section */
+		TESTCONTAINERPROXY /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = PROJECT /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = TARGET1;
+			remoteInfo = LandmarkAR;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXGroup section */
 		ARGROUP /* AR */ = {
@@ -79,6 +102,7 @@
 			isa = PBXGroup;
 			children = (
 				SRCGROUP /* LandmarkAR */,
+				TESTGROUP /* LandmarkARTests */,
 				PRODGROUP /* Products */,
 			);
 			sourceTree = "<group>";
@@ -98,6 +122,7 @@
 			isa = PBXGroup;
 			children = (
 				A999 /* LandmarkAR.app */,
+				TESTPROD /* LandmarkARTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -148,6 +173,19 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
+		TESTGROUP /* LandmarkARTests */ = {
+			isa = PBXGroup;
+			children = (
+				T001 /* LandmarkCategoryTests.swift */,
+				T002 /* AppSettingsTests.swift */,
+				T003 /* DataSourceCircuitBreakerTests.swift */,
+				T004 /* ErrorLoggerTests.swift */,
+				T005 /* BearingTests.swift */,
+				T006 /* LandmarkModelTests.swift */,
+			);
+			path = LandmarkARTests;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -168,6 +206,23 @@
 			productReference = A999 /* LandmarkAR.app */;
 			productType = "com.apple.product-type.application";
 		};
+		TESTTARGET /* LandmarkARTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = TESTBUILDCONFIGLIST /* Build configuration list for PBXNativeTarget "LandmarkARTests" */;
+			buildPhases = (
+				TESTSRCPHASE /* Sources */,
+				TESTFRAMEWORKS /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				TESTDEP /* PBXTargetDependency */,
+			);
+			name = LandmarkARTests;
+			productName = LandmarkARTests;
+			productReference = TESTPROD /* LandmarkARTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -180,6 +235,10 @@
 				TargetAttributes = {
 					TARGET1 = {
 						CreatedOnToolsVersion = 15.0;
+					};
+					TESTTARGET = {
+						CreatedOnToolsVersion = 15.0;
+						TestTargetID = TARGET1;
 					};
 				};
 			};
@@ -197,6 +256,7 @@
 			projectRoot = "";
 			targets = (
 				TARGET1 /* LandmarkAR */,
+				TESTTARGET /* LandmarkARTests */,
 			);
 		};
 /* End PBXProject section */
@@ -211,6 +271,16 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		TESTFRAMEWORKS /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		SRCPHASE /* Sources */ = {
@@ -236,7 +306,28 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		TESTSRCPHASE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				T101 /* LandmarkCategoryTests.swift in Sources */,
+				T102 /* AppSettingsTests.swift in Sources */,
+				T103 /* DataSourceCircuitBreakerTests.swift in Sources */,
+				T104 /* ErrorLoggerTests.swift in Sources */,
+				T105 /* BearingTests.swift in Sources */,
+				T106 /* LandmarkModelTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		TESTDEP /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = TARGET1 /* LandmarkAR */;
+			targetProxy = TESTCONTAINERPROXY /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		DEBUGCONFIG /* Debug */ = {
@@ -404,6 +495,38 @@
 			};
 			name = Release;
 		};
+		TESTDEBUG /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = Y2WMH5T48B;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.edwardaspendesigns.LandmarkARTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/LandmarkAR.app/LandmarkAR";
+			};
+			name = Debug;
+		};
+		TESTRELEASE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = Y2WMH5T48B;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.edwardaspendesigns.LandmarkARTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/LandmarkAR.app/LandmarkAR";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -421,6 +544,15 @@
 			buildConfigurations = (
 				DEBUGCONFIG /* Debug */,
 				RELEASECONFIG /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		TESTBUILDCONFIGLIST /* Build configuration list for PBXNativeTarget "LandmarkARTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				TESTDEBUG /* Debug */,
+				TESTRELEASE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
