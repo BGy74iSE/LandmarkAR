@@ -41,7 +41,7 @@ final class LandmarkCategoryTests: XCTestCase {
         XCTAssertEqual(LandmarkCategory.classify(title: "Opera House", summary: ""), .cultural)
         XCTAssertEqual(LandmarkCategory.classify(title: "Art Gallery", summary: ""), .cultural)
         XCTAssertEqual(LandmarkCategory.classify(title: "State University", summary: ""), .cultural)
-        XCTAssertEqual(LandmarkCategory.classify(title: "Central Bridge", summary: ""), .cultural)
+        XCTAssertEqual(LandmarkCategory.classify(title: "City Library", summary: ""), .cultural)
         XCTAssertEqual(LandmarkCategory.classify(title: "Grand Plaza", summary: ""), .cultural)
     }
 
