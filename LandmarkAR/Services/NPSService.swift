@@ -10,16 +10,17 @@ class NPSService {
     private let baseURL = "https://developer.nps.gov/api/v1"
     private let fetchLimit = 100  // NPS has ~500 total sites; fetch in batches
 
+    // LAR-17: NPS is disabled as a user-facing source. Set this key to re-enable.
+    private let apiKey: String = ""
+
     // MARK: - Fetch Nearby Landmarks
 
-    /// Main entry point. Returns an empty array immediately if NPS is disabled or no API key is set.
+    /// Main entry point. Returns an empty array immediately if no API key is configured.
     func fetchNearbyLandmarks(near location: CLLocation, settings: AppSettings) async throws -> [Landmark] {
-
-        // LAR-12: Respect the data source toggle and require an API key
-        guard settings.isNPSEnabled, !settings.npsApiKey.isEmpty else { return [] }
+        guard !apiKey.isEmpty else { return [] }
 
         let radiusMeters = settings.maxDistanceKm * 1000
-        let parks = try await fetchAllParks(apiKey: settings.npsApiKey)
+        let parks = try await fetchAllParks(apiKey: apiKey)
 
         return parks.compactMap { park in
             guard let lat = Double(park.latitude), let lon = Double(park.longitude),
