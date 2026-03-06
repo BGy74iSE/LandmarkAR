@@ -82,19 +82,15 @@ struct SettingsView: View {
 
                 // MARK: Real-time Updates (LAR-25, LAR-28)
                 Section {
-                    LabeledContent {
-                        Picker("", selection: $settings.realtimeUpdateMode) {
-                            Text("Off").tag(RealtimeUpdateMode.off)
-                            Text("Wi-Fi Only").tag(RealtimeUpdateMode.wifiOnly)
-                            Text("Always").tag(RealtimeUpdateMode.always)
-                        }
-                        .pickerStyle(.segmented)
-                        .fixedSize()
-                    } label: {
-                        Label("Real-time Updates", systemImage: "arrow.clockwise.circle")
+                    Picker("Real-time Updates", selection: $settings.realtimeUpdateMode) {
+                        Text("Off").tag(RealtimeUpdateMode.off)
+                        Text("Wi-Fi Only").tag(RealtimeUpdateMode.wifiOnly)
+                        Text("Always").tag(RealtimeUpdateMode.always)
                     }
+                    .pickerStyle(.inline)
+                    .labelsHidden()
                 } header: {
-                    Text("Updates")
+                    Text("Real-time Updates")
                 } footer: {
                     Text("Refreshes landmarks every 30 s or after moving 50 m. \"Wi-Fi Only\" skips updates on cellular to save data.")
                 }
