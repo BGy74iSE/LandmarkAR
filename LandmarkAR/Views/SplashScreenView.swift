@@ -1,15 +1,14 @@
 import SwiftUI
-import UIKit
 
 // MARK: - SplashScreenView (LAR-31)
-// Shown on launch for 4 seconds. Uses the app icon artwork as a full-screen
-// background and displays the app name, tagline, and studio credit.
+// Shown on launch for 4 seconds. Uses a full-screen background image and
+// displays the app name, tagline, and studio credit.
 
 struct SplashScreenView: View {
     var body: some View {
         ZStack {
-            // App icon artwork as full-bleed background
-            Image(uiImage: UIImage(named: "AppIcon") ?? UIImage())
+            // Background image
+            Image("SplashBackground")
                 .resizable()
                 .scaledToFill()
                 .ignoresSafeArea()

@@ -9,12 +9,13 @@ struct LandmarkARApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ZStack {
-                ContentView()
+            Group {
                 if showSplash {
                     SplashScreenView()
                         .transition(.opacity)
-                        .zIndex(1)
+                } else {
+                    ContentView()
+                        .transition(.opacity)
                 }
             }
             .onAppear {
