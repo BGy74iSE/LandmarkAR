@@ -111,6 +111,7 @@ struct ContentView: View {
                 overlayUI
             }
         }
+        .ignoresSafeArea()
         .onAppear {
             locationManager.start()
         }
@@ -198,6 +199,7 @@ struct ContentView: View {
                     startPoint: .top,
                     endPoint: .bottom
                 )
+                .ignoresSafeArea(edges: .top)
             )
 
             Spacer()
