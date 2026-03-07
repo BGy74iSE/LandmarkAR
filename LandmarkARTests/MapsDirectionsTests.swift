@@ -4,8 +4,6 @@ import XCTest
 @testable import LandmarkAR
 
 // MARK: - MapsDirectionsTests (LAR-37)
-// Verifies that a Landmark's coordinate maps correctly to an MKPlacemark,
-// which is the input to the "Get Directions" / openInMaps call.
 
 final class MapsDirectionsTests: XCTestCase {
 
@@ -21,6 +19,8 @@ final class MapsDirectionsTests: XCTestCase {
             bearing: 0
         )
     }
+
+    // MARK: - MKPlacemark / MKMapItem construction
 
     func testPlacemarkCoordinateMatchesLandmark() {
         let landmark = makeLandmark(lat: 37.7749, lon: -122.4194)
@@ -40,10 +40,53 @@ final class MapsDirectionsTests: XCTestCase {
     }
 
     func testPlacemarkPreservesNegativeCoordinates() {
-        let landmark = makeLandmark(lat: -33.8688, lon: 151.2093, title: "Sydney Opera House")
+        let landmark = makeLandmark(lat: -33.8688, lon: 151.2093)
         let placemark = MKPlacemark(coordinate: landmark.coordinate)
 
         XCTAssertEqual(placemark.coordinate.latitude,  -33.8688, accuracy: 0.00001)
         XCTAssertEqual(placemark.coordinate.longitude, 151.2093, accuracy: 0.00001)
+    }
+
+    // MARK: - MapApp enum
+
+    func testMapAppDisplayNames() {
+        XCTAssertEqual(MapApp.appleMaps.displayName,  "Apple Maps")
+        XCTAssertEqual(MapApp.googleMaps.displayName, "Google Maps")
+        XCTAssertEqual(MapApp.waze.displayName,       "Waze")
+    }
+
+    func testAppleMapsHasNoUrlScheme() {
+        XCTAssertNil(MapApp.appleMaps.urlScheme,
+                     "Apple Maps requires no canOpenURL check — it is always available")
+    }
+
+    func testThirdPartyAppsHaveUrlSchemes() {
+        XCTAssertEqual(MapApp.googleMaps.urlScheme, "comgooglemaps")
+        XCTAssertEqual(MapApp.waze.urlScheme,       "waze")
+    }
+
+    func testAllCasesCount() {
+        XCTAssertEqual(MapApp.allCases.count, 3)
+    }
+
+    func testAppleMapsIsFirstInAllCases() {
+        XCTAssertEqual(MapApp.allCases.first, .appleMaps,
+                       "Apple Maps should always be listed first")
+    }
+
+    // MARK: - URL scheme format
+
+    func testGoogleMapsDirectionsUrl() {
+        let lat = 51.5074, lon = -0.1278
+        let url = URL(string: "comgooglemaps://?daddr=\(lat),\(lon)&directionsmode=driving")
+        XCTAssertNotNil(url)
+        XCTAssertEqual(url?.scheme, "comgooglemaps")
+    }
+
+    func testWazeDirectionsUrl() {
+        let lat = 51.5074, lon = -0.1278
+        let url = URL(string: "waze://?ll=\(lat),\(lon)&navigate=yes")
+        XCTAssertNotNil(url)
+        XCTAssertEqual(url?.scheme, "waze")
     }
 }
